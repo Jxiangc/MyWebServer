@@ -3,6 +3,7 @@
 
 #include <mutex>
 #include <thread>
+#include <cstdarg>
 #include <sys/stat.h>
 #include "blockqueue.h"
 #include "../buffer/buffer.h"
@@ -23,10 +24,13 @@ public:
     void SetLevel(int level);
     bool IsOpen() { return isOpen_; }
 
+    Log(const Log& other) = delete;
+    Log& operator=(const Log& other) = delete;
+
 private:
     Log();
-    void AppendLogLevelTitle_(int level);
     virtual ~Log();
+    void AppendLogLevelTitle_(int level);
     void AsyncWrite_();
 
 private:
@@ -54,10 +58,10 @@ private:
 
 #define LOG_BASE(level, format, ...) \
     do {\
-        Log* log = Log::Instance();\
-        if (log->IsOpen() && log->GetLevel() <= level) {\
-            log->write(level, format, ##__VA_ARGS__); \
-            log->flush();\
+        Log& log = Log::Instance();\
+        if (log.IsOpen() && log.GetLevel() <= level) {\
+            log.write(level, format, ##__VA_ARGS__); \
+            log.flush();\
         }\
     } while(0);
 

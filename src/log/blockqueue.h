@@ -107,7 +107,7 @@ T BlockDeque<T>::back() {
 template<class T>
 void BlockDeque<T>::push_back(const T& item) {
     std::unique_lock<std::mutex> lock(mtx_);
-    while (dq_.size() >= capacity) {
+    while (dq_.size() >= capacity_) {
         condProducer_.wait(lock);
     }
     dq_.push_back(item);
@@ -117,7 +117,7 @@ void BlockDeque<T>::push_back(const T& item) {
 template<class T>
 void BlockDeque<T>::push_front(const T& item) {
     std::unique_lock<std::mutex> lock(mtx_);
-    while (dq_.size() >= capacity) {
+    while (dq_.size() >= capacity_) {
         condProducer_.wait(lock);
     }
     dq_.push_front(item);

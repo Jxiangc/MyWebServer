@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/jxc/MyWebServer/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

@@ -43,7 +43,7 @@ void Buffer::RetrieveUntil(const char* end) {
 
 // 取出所有数据
 void Buffer::RetrieveAll() {
-    bzero(&buffer_, buffer_.size());
+    // bzero(&buffer_[0], buffer_.size());
     readPos_ = writePos_ = 0;
 }
 
