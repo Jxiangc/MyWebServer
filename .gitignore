@@ -1,3 +1,5 @@
+!Makefile
+
 # 编译生成的文件
 *.o
 *.obj
@@ -14,3 +16,10 @@
 *.app
 
 *.log
+
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+*.cmake
+*.make

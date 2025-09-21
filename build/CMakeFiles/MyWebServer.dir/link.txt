@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/MyWebServer.dir/src/main.cpp.o CMakeFiles/MyWebServer.dir/src/buffer/buffer.cpp.o CMakeFiles/MyWebServer.dir/src/log/log.cpp.o CMakeFiles/MyWebServer.dir/src/pool/sqlconnpool.cpp.o -o bin/MyWebServer  /usr/lib/x86_64-linux-gnu/libmysqlcppconn.so

@@ -1,4 +1,0 @@
-/home/jxc/MyWebServer/build/CMakeFiles/MyWebServer.dir
-/home/jxc/MyWebServer/build/CMakeFiles/Test.dir
-/home/jxc/MyWebServer/build/CMakeFiles/edit_cache.dir
-/home/jxc/MyWebServer/build/CMakeFiles/rebuild_cache.dir
