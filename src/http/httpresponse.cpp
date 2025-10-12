@@ -151,6 +151,6 @@ void HttpResponse::ErrorContent(Buffer& buff, std::string message) {
     body += "<p>" + message + "</p>";
     body += "<hr><em>TinyWebServer</em></body></html>";
 
-    buff.Append("Content-length: " + std::to_string(body.size()) + "\r\n\r\n");
+    buff.Append("Content-Length: " + std::to_string(body.size()) + "\r\n\r\n");
     buff.Append(body);
 }

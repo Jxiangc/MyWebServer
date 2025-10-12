@@ -51,6 +51,7 @@ int HttpConn::GetPort() const {
     return addr_.sin_port;
 }
 
+// 将请求报文写入缓冲区
 ssize_t HttpConn::read(int* saveErrno) {
     ssize_t len = -1;
     do {
@@ -106,6 +107,6 @@ bool HttpConn::process() {
         iov_[1].iov_len = response_.FileLen();
         iovCnt_ = 2;
     }
-    LOG_DEBUG("filesize: %d, %d  to %d", response_.FileLen() , iovCnt_, ToWriteBytes());
+    LOG_DEBUG("file size: %d, %d  to %d", response_.FileLen(), iovCnt_, ToWriteBytes());
     return true;
 }
