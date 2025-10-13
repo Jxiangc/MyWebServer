@@ -45,7 +45,7 @@ private:
     void SwapNode_(size_t i, size_t j);
 
     std::vector<TimerNode> heap_;
-    // key:id value:vector的下标
+    // key: id   value: vector的下标
     std::unordered_map<int, size_t> ref_;   // id对应的在heap_中的下标，方便用heap_的时候查找
 };
 

@@ -11,7 +11,7 @@ void HeapTimer::SwapNode_(size_t i, size_t j) {
 void HeapTimer::shiftup_(size_t i) {
     assert(i >= 0 && i < heap_.size());
     size_t parent = (i - 1) / 2; // 下标从零开始，要减一
-    while (parent >= 0) {
+    while (i > 0) {
         if (heap_[parent] > heap_[i]) {
             SwapNode_(parent, i);
             i = parent;
@@ -76,14 +76,15 @@ void HeapTimer::add(int id, int timeOut, const TimeoutCallBack& cb) {
 
 void HeapTimer::doWork(int id) {
     if (heap_.empty() || !ref_.count(id)) return;
-    auto node = heap_[ref_[id]];
+    size_t i = ref_[id];
+    auto& node = heap_[i];
     node.cb();
-    del_(node.id);
+    del_(i);
 }
 
 void HeapTimer::tick() {
     while (!heap_.empty()) {
-        auto top = heap_.front();
+        auto& top = heap_.front();
         if (std::chrono::duration_cast<MS>(top.expires - Clock::now()).count() > 0) {
             break;
         }
