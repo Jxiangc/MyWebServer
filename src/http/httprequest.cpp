@@ -56,7 +56,7 @@ bool HttpRequest::parse(Buffer& buff) {
 
 // 解析路径
 void HttpRequest::ParsePath_() {
-    if (path_ == "") {
+    if (path_ == "" || path_ == "/") {
         path_ = "/index.html";
         return;
     }

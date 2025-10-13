@@ -11,7 +11,7 @@ WebServer::WebServer(
     // 设置资源路径
     srcDir_ = getcwd(nullptr, 256); // 当前工作目录的绝对路径，设为nullptr会使用malloc为srcDir_申请空间
     assert(srcDir_);
-    strcat(srcDir_, "/resources/");
+    strcat(srcDir_, "/resources");
     HttpConn::userCount = 0;
     HttpConn::srcDir = srcDir_;
 

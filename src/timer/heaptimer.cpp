@@ -11,7 +11,7 @@ void HeapTimer::SwapNode_(size_t i, size_t j) {
 void HeapTimer::shiftup_(size_t i) {
     assert(i >= 0 && i < heap_.size());
     size_t parent = (i - 1) / 2; // 下标从零开始，要减一
-    while (parent) {
+    while (parent >= 0) {
         if (heap_[parent] > heap_[i]) {
             SwapNode_(parent, i);
             i = parent;

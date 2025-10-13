@@ -28,6 +28,9 @@ list(REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/main.cpp)
 add_executable(server src/main.cpp ${SOURCES})
 target_link_libraries(server ${MYSQLCPPCONN_LIBRARY})
 
+# 添加调试信息
+target_compile_options(server PRIVATE -g)
+
 # 创建测试目标
 add_executable(Test test/Test.cpp ${SOURCES})
 target_link_libraries(Test ${MYSQLCPPCONN_LIBRARY})

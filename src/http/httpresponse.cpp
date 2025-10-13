@@ -48,7 +48,7 @@ HttpResponse::~HttpResponse() {
 }
 
 void HttpResponse::Init(const std::string& srcDir, std::string& path, bool isKeepAlive, int code) {
-    assert(srcDir_ != "");
+    assert(srcDir != "");
     if (mmFile_) UnmapFile();
     code_ = code;
     isKeepAlive_ = isKeepAlive;
@@ -81,7 +81,7 @@ size_t HttpResponse::FileLen() const {
 }
 
 void HttpResponse::ErrorHtml_() {
-    if (CODE_STATUS.count(code_)) {
+    if (CODE_PATH.count(code_)) {
         path_ = CODE_PATH.find(code_)->second;
         stat((srcDir_ + path_).data(), &mmFileStat_);
     }
