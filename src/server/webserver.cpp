@@ -249,7 +249,7 @@ bool WebServer::InitSocket_() {
         return false;
     }
 
-    ret = listen(listenFd_, 6);
+    ret = listen(listenFd_, 1024);
     if (ret < 0) {
         close(listenFd_);
         LOG_ERROR("listen port: %d error!", port_);
@@ -271,5 +271,5 @@ bool WebServer::InitSocket_() {
 // 设置非阻塞
 int WebServer::SetFdNonblock(int fd) {
     assert(fd > 0);
-    return fcntl(fd, F_SETFL, fcntl(fd, F_GETFD, 0) | O_NONBLOCK);
+    return fcntl(fd, F_SETFL, fcntl(fd, F_GETFL, 0) | O_NONBLOCK);
 }
