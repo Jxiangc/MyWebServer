@@ -128,10 +128,8 @@ template<class T>
 bool BlockDeque<T>::pop(T& item) {
     std::unique_lock<std::mutex> lock(mtx_);
     while (dq_.empty()) {
+        if (is_closed_) return false;
         condCustomer_.wait(lock);
-        if (is_closed_) {
-            return false;
-        }
     }
     item = dq_.front();
     dq_.pop_front();
@@ -143,12 +141,12 @@ template<class T>
 bool BlockDeque<T>::pop(T& item, int timeout) {
     std::unique_lock<std::mutex> lock(mtx_);
     while (dq_.empty()) {
-        if (condCustomer_.wait_for(lock, std::chrono::seconds(timeout))
-            == std::cv_status::timeout) 
-            return false;
         if (is_closed_) {
             return false;
         }
+        if (condCustomer_.wait_for(lock, std::chrono::seconds(timeout))
+            == std::cv_status::timeout) 
+            return false;
     }
     item = dq_.front();
     dq_.pop_front();
