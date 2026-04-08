@@ -101,11 +101,12 @@ void Log::init(int level, const char* path,
 
     lineCount_ = 0;
     time_t timer = time(nullptr);
-    struct tm* systime = localtime(&timer);
+    struct tm systime;
+    localtime_r(&timer, &systime);
     char fileName[LOG_NAME_LEN] = {0};
     snprintf(fileName, LOG_NAME_LEN - 1, "%s/%04d_%02d_%02d%s",
-            path_, systime->tm_year + 1900, systime->tm_mon + 1, systime->tm_mday, suffix_);
-    toDay_ = systime->tm_mday;
+            path_, systime.tm_year + 1900, systime.tm_mon + 1, systime.tm_mday, suffix_);
+    toDay_ = systime.tm_mday;
     {
         std::lock_guard<std::mutex> locker(mtx_);
         buff_.RetrieveAll();
@@ -127,48 +128,47 @@ void Log::write(int level, const char* format,...) {
     struct timeval now;
     gettimeofday(&now, nullptr);
     time_t tSec = now.tv_sec;
-    struct tm* systime = localtime(&tSec);
+    struct tm systime;
+    localtime_r(&tSec, &systime);
 
-    if (toDay_ != systime->tm_mday || (lineCount_ && (lineCount_ % MAX_LINES == 0))) {
+    std::unique_lock<std::mutex> locker(mtx_);
+    
+    if (toDay_ != systime.tm_mday || (lineCount_ && (lineCount_ % MAX_LINES == 0))) {
         char newFile[LOG_NAME_LEN];
-        if (toDay_ != systime->tm_mday) {
+        if (toDay_ != systime.tm_mday) {
             snprintf(newFile, LOG_NAME_LEN - 1, "%s/%04d_%02d_%02d%s",
-                    path_, systime->tm_year + 1900, systime->tm_mon + 1, systime->tm_mday, suffix_);
-            toDay_ = systime->tm_mday;
+                    path_, systime.tm_year + 1900, systime.tm_mon + 1, systime.tm_mday, suffix_);
+            toDay_ = systime.tm_mday;
             lineCount_ = 0;
         } else {
             snprintf(newFile, LOG_NAME_LEN - 1, "%s/%04d_%02d_%02d-%d%s",
-                    path_, systime->tm_year + 1900, systime->tm_mon + 1, systime->tm_mday, (lineCount_ / MAX_LINES), suffix_);
+                    path_, systime.tm_year + 1900, systime.tm_mon + 1, systime.tm_mday, (lineCount_ / MAX_LINES), suffix_);
         }
-        std::lock_guard<std::mutex> locker(mtx_);
         flush();
         fclose(fp_);
         fp_ = fopen(newFile, "a");
         assert(fp_ != nullptr);
     }
+    
+    lineCount_++;
+    int len = snprintf(buff_.BeginWrite(), 128, "%d-%02d-%02d %02d:%02d:%02d.%06ld ",
+                    systime.tm_year + 1900, systime.tm_mon + 1, systime.tm_mday, 
+                    systime.tm_hour, systime.tm_min, systime.tm_sec, now.tv_usec);
+    
+    buff_.HasWritten(len);
+    AppendLogLevelTitle_(level);
 
-    {
-        lineCount_++;
-        std::unique_lock<std::mutex> locker(mtx_);
-        int len = snprintf(buff_.BeginWrite(), 128, "%d-%02d-%02d %02d:%02d:%02d.%06ld ",
-                        systime->tm_year + 1900, systime->tm_mon + 1, systime->tm_mday, 
-                        systime->tm_hour, systime->tm_min, systime->tm_sec, now.tv_usec);
-        
-        buff_.HasWritten(len);
-        AppendLogLevelTitle_(level);
+    va_start(args, format);
+    len = vsnprintf(buff_.BeginWrite(), buff_.WriteableBytes(), format, args);
+    va_end(args);
 
-        va_start(args, format);
-        len = vsnprintf(buff_.BeginWrite(), buff_.WriteableBytes(), format, args);
-        va_end(args);
+    buff_.HasWritten(len);
+    buff_.Append("\n\0", 2);
 
-        buff_.HasWritten(len);
-        buff_.Append("\n\0", 2);
-
-        if (isAsync_ && deque_ && !deque_->full()) {
-            deque_->push_back(buff_.RetrieveAllToStr());
-        } else {
-            fputs(buff_.Peek(), fp_);
-        }
-        buff_.RetrieveAll();
+    if (isAsync_ && deque_ && !deque_->full()) {
+        deque_->push_back(buff_.RetrieveAllToStr());
+    } else {
+        fputs(buff_.Peek(), fp_);
     }
+    buff_.RetrieveAll();
 }
