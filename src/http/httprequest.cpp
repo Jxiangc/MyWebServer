@@ -71,7 +71,7 @@ void HttpRequest::ParsePath_() {
 
 bool HttpRequest::ParseRequestLine_(const std::string& line) {
     // 正则表达式模式串
-    std::regex patten("^([^ ]*) ([^ ]*) HTTP/([^ ]*)$");
+    static const std::regex patten("^([^ ]*) ([^ ]*) HTTP/([^ ]*)$");
     std::smatch subMatch;
 
     if (std::regex_match(line, subMatch, patten)) {
@@ -86,7 +86,7 @@ bool HttpRequest::ParseRequestLine_(const std::string& line) {
 }
 
 void HttpRequest::ParseHeader_(const std::string& line) {
-    std::regex patten("^([^:]*): ?(.*)$");
+    static const std::regex patten("^([^:]*): ?(.*)$");
     std::smatch subMatch;
     if (std::regex_match(line, subMatch, patten)) {
         header_[subMatch[1]] = subMatch[2];
@@ -109,7 +109,7 @@ int HttpRequest::ConverHex(char ch) {
 }
 
 void HttpRequest::ParsePost_() {
-    if (method_ != "Post" || header_["Content-Type"] == "application/x-www-form-urlencoded")
+    if (method_ != "POST" || header_["Content-Type"] != "application/x-www-form-urlencoded")
         return;
 
     ParseFromUrlencoded_();
@@ -183,7 +183,6 @@ bool HttpRequest::UserVerify(const std::string &name, const std::string &pwd, bo
             return false;
         }
 
-        bool flag = false;
         std::unique_ptr<sql::PreparedStatement> pstmt;
         std::unique_ptr<sql::ResultSet> res;
         
