@@ -118,7 +118,7 @@ void HttpRequest::ParsePost_() {
         int tag = DEFAULT_HTML_TAG.find(path_)->second;
         LOG_DEBUG("Tag: %d", tag);
         bool isLogin = tag == 1;
-        if (UserVerify(post_["username"], post_["passoword"], isLogin)) {
+        if (UserVerify(post_["username"], post_["password"], isLogin)) {
             path_ = "/welcome.html";
         } else {
             path_ = "/error.html";
