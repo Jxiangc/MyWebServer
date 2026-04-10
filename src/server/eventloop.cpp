@@ -123,13 +123,14 @@ void EventLoop::OnWrite_(HttpConn* client) {
     if (client->ToWriteBytes() == 0) {
         /* 传输完成 */
         if (client->IsKeepAlive()) {
+            epoller_->ModFd(client->GetFd(), connEvent_ | EPOLLIN);
             OnProcess_(client);
             return;
         }
     } else if (ret < 0) {
         if (writeErrno == EAGAIN) {
             /* 继续监听可写事件 */
-            epoller_->ModFd(client->GetFd(), connEvent_ | EPOLLOUT);
+            // epoller_->ModFd(client->GetFd(), connEvent_ | EPOLLOUT);
             return;
         }
     }
@@ -139,8 +140,6 @@ void EventLoop::OnWrite_(HttpConn* client) {
 void EventLoop::OnProcess_(HttpConn* client) {
     if (client->process()) {
         epoller_->ModFd(client->GetFd(), connEvent_ | EPOLLOUT);
-    } else {
-        epoller_->ModFd(client->GetFd(), connEvent_ | EPOLLIN);
     }
 }
 

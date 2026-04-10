@@ -63,7 +63,7 @@ WebServer::~WebServer() {
 
 void WebServer::InitEventMode_(int trigMode) {
     listenEvent_ = EPOLLRDHUP;
-    connEvent_ = EPOLLONESHOT | EPOLLRDHUP; // EPOLLRDHUP用于检测对端关闭连接
+    connEvent_ = EPOLLRDHUP; // EPOLLRDHUP用于检测对端关闭连接
     switch (trigMode) {
         case 0: /* LT + LT */
             break;

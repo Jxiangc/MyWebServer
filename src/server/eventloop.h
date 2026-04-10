@@ -45,10 +45,9 @@ private:
     std::unique_ptr<Epoller> epoller_;
     std::unordered_map<int, HttpConn> conns_;
     std::unique_ptr<HeapTimer> timer_;
+    
     uint32_t connEvent_;
-
     int timeoutMS_;
-
     const char* srcDir_;
 };
 
