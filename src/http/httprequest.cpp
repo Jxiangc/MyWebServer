@@ -159,10 +159,11 @@ void HttpRequest::ParseFromUrlencoded_() {
             default:
                 break;
         }
-        if (!post_.count(key) && j < i) {
-            value = body_.substr(j, i - j);
-            post_[key] = value;
-        }
+    }
+    if (!key.empty() && j <= n) {
+        value = body_.substr(j, n - j);
+        post_[key] = value;
+        LOG_DEBUG("%s = %s", key.c_str(), value.c_str());
     }
 }
 
